@@ -43,7 +43,6 @@
     <script>
         const calculateButton = document.getElementById('calculate-button');
         const birthDateInput = document.getElementById('birth-date');
-        const resultsDiv = document.getElementById('results');
         const monthlySavings20YearsValue = document.getElementById('monthly-savings-20-years-value');
         const monthlySavings10YearsValue = document.getElementById('monthly-savings-10-years-value');
         const monthlySavings5YearsValue = document.getElementById('monthly-savings-5-years-value');
@@ -56,8 +55,21 @@
             const year = parseInt(birthDate[2]);
             const birthDateObject = new Date(year, month - 1, day);
             const today = new Date();
-            const age = today.getFullYear() - birthDateObject.getFullYear();
-            const monthsUntilRetirement = (67 - age) * 12;
+
+            // חישוב גיל
+            let age = today.getFullYear() - birthDateObject.getFullYear();
+            const monthDifference = today.getMonth() - birthDateObject.getMonth();
+            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObject.getDate())) {
+                age--;
+            }
+
+            // חישוב חודשים עד הפרישה
+            const monthsUntilRetirement = (67 - age) * 12 - today.getMonth() + birthDateObject.getMonth();
+            if (monthsUntilRetirement <= 0) {
+                alert('כבר הגעת או עבר גיל 67!');
+                return;
+            }
+
             const targetSavings = 1000000.00; // 1,000,000.00 million shekels
             const annualInterest20Years = 0.0927; // 9.27% annual interest
             const annualInterest10Years = 0.1243; // 12.43% annual interest
@@ -76,9 +88,8 @@
         });
 
         function calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest) {
-            const monthlyInterest = Math.pow(1 + annualInterest, 1/12) - 1;
-            const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-            return monthlySavings;
+            const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
+            return targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
         }
     </script>
 </body>
