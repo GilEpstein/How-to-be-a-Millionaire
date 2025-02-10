@@ -15,9 +15,15 @@
                 <h2 class="text-xl font-semibold text-gray-700 text-center">הכנס את תאריך הלידה שלך</h2>
                 <div class="flex justify-center">
                     <input type="text" class="bg-gray-50 p-4 rounded-md" id="birth-date" placeholder="יום-חודש-שנה" />
-                    <button class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors ml-4" id="calculate-button">חשב</button>
                 </div>
-                <p class="text-gray-600 text-center" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. החישוב מתבסס על ההנחה שאתה רוצה לחסוך 1,000,000.00 ש"ח עד גיל 67, מבוסס על תשואות היסטוריות של S&P500.</p>
+                <h2 class="text-xl font-semibold text-gray-700 text-center mt-4">בחר את גיל הפרישה שלך</h2>
+                <div class="flex justify-center">
+                    <input type="number" class="bg-gray-50 p-4 rounded-md" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
+                </div>
+                <div class="flex justify-center mt-4">
+                    <button class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors" id="calculate-button">חשב</button>
+                </div>
+                <p class="text-gray-600 text-center mt-4" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. החישוב מתבסס על ההנחה שאתה רוצה לחסוך 1,000,000.00 ש"ח עד גיל הפרישה שבחרת, מבוסס על תשואות היסטוריות.</p>
             </div>
             
             <div class="space-y-4 mt-8">
@@ -28,7 +34,7 @@
                         <li class="text-gray-600" id="monthly-savings-20-years">- מבוסס על ממוצע התשואה השנתית של 20 השנים האחרונות (9.27%): <span id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
                         <li class="text-gray-600" id="monthly-savings-10-years">- מבוסס על ממוצע התשואה השנתית של 10 השנים האחרונות (12.43%): <span id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
                         <li class="text-gray-600" id="monthly-savings-5-years">- מבוסס על ממוצע התשואה השנתית של 5 השנים האחרונות (14.9%): <span id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
-                                            </ul>
+                    </ul>
                 </div>
             </div>
 
@@ -43,10 +49,10 @@
     <script>
         const calculateButton = document.getElementById('calculate-button');
         const birthDateInput = document.getElementById('birth-date');
+        const retirementAgeInput = document.getElementById('retirement-age');
         const monthlySavings20YearsValue = document.getElementById('monthly-savings-20-years-value');
         const monthlySavings10YearsValue = document.getElementById('monthly-savings-10-years-value');
         const monthlySavings5YearsValue = document.getElementById('monthly-savings-5-years-value');
-        const monthlySavingsSp500Value = document.getElementById('monthly-savings-sp500-value');
 
         calculateButton.addEventListener('click', () => {
             const birthDate = birthDateInput.value.split('-');
@@ -63,10 +69,10 @@
                 age--;
             }
 
-            // חישוב חודשים עד הפרישה
-            const monthsUntilRetirement = (67 - age) * 12 - today.getMonth() + birthDateObject.getMonth();
+            const retirementAge = parseInt(retirementAgeInput.value);
+            const monthsUntilRetirement = (retirementAge - age) * 12 - today.getMonth() + birthDateObject.getMonth();
             if (monthsUntilRetirement <= 0) {
-                alert('כבר הגעת או עבר גיל 67!');
+                alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
             }
 
@@ -74,17 +80,14 @@
             const annualInterest20Years = 0.0927; // 9.27% annual interest
             const annualInterest10Years = 0.1243; // 12.43% annual interest
             const annualInterest5Years = 0.149; // 14.9% annual interest
-            const annualInterestSp500 = 0.105; // 10.5% annual interest
 
             const monthlySavings20Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest20Years);
             const monthlySavings10Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest10Years);
             const monthlySavings5Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest5Years);
-            const monthlySavingsSp500 = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterestSp500);
 
             monthlySavings20YearsValue.textContent = `${monthlySavings20Years.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
             monthlySavings10YearsValue.textContent = `${monthlySavings10Years.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
             monthlySavings5YearsValue.textContent = `${monthlySavings5Years.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-            monthlySavingsSp500Value.textContent = `${monthlySavingsSp500.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
         });
 
         function calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest) {
