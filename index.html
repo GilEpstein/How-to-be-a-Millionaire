@@ -121,8 +121,8 @@
                 data: {
                     labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
                     datasets: [
-                        { label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 1, fill: false },
-                        { label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 1, fill: false }
+                        { label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 0.5, pointRadius: 1, fill: false },
+                        { label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 0.5, pointRadius: 1, fill: false }
                     ]
                 },
                 options: {
