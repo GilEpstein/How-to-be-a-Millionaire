@@ -3,48 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>להיות מליונר בפנסיה @פרופ' גיל</title>
+    <title>המסלול שלך למיליון</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50" dir="rtl">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">איך להיות מליונר</h1>
-        <h2 class="text-xl font-semibold text-gray-700 text-center">@פרופ' גיל</h2>
+<body class="bg-gradient-to-r from-blue-100 to-blue-300 min-h-screen flex items-center justify-center" dir="rtl">
+    <div class="container mx-auto px-6 py-10 max-w-3xl bg-white rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
+        <h2 class="text-lg font-semibold text-gray-600 text-center mb-6">@פרופ' גיל</h2>
         
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8 mx-auto w-fit">
+        <div class="bg-white rounded-lg shadow-md p-6">
             <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-gray-700 text-center">הכנס את תאריך הלידה שלך</h2>
+                <h2 class="text-lg font-semibold text-gray-700 text-center">הכנס את תאריך הלידה שלך</h2>
                 <div class="flex justify-center">
-                    <input type="text" class="bg-gray-50 p-4 rounded-md" id="birth-date" placeholder="יום-חודש-שנה" />
+                    <input type="text" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-64 text-center" id="birth-date" placeholder="יום-חודש-שנה" />
                 </div>
-                <h2 class="text-xl font-semibold text-gray-700 text-center mt-4">בחר את הגיל שאתה רוצה להיות בו מליונר</h2>
+                <h2 class="text-lg font-semibold text-gray-700 text-center mt-4">בחר באיזה גיל תרצה להגיע למיליון ש"ח</h2>
                 <div class="flex justify-center">
-                    <input type="number" class="bg-gray-50 p-4 rounded-md" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
+                    <input type="number" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-24 text-center" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
                 </div>
-                <div class="flex justify-center mt-4">
-                    <button class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition-colors" id="calculate-button">חשב</button>
+                <div class="flex justify-center mt-6">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors text-lg font-semibold" id="calculate-button">🔢 חשב</button>
                 </div>
-                <p class="text-gray-600 text-center mt-4" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. החישוב מתבסס על ההנחה שאתה רוצה לחסוך 1,000,000.00 ש"ח עד גיל הפרישה שבחרת, מבוסס על תשואות היסטוריות.</p>
+                <p class="text-gray-600 text-center mt-4 text-sm" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. מבוסס על תשואות היסטוריות של S&P500.</p>
             </div>
             
             <div class="space-y-4 mt-8">
-                <h2 class="text-xl font-semibold text-gray-700 text-center">תוצאות</h2>
+                <h2 class="text-lg font-semibold text-gray-700 text-center">תוצאות</h2>
                 <div class="space-y-2" id="results">
-                    <h3 class="text-xl font-semibold text-gray-700 text-center" id="monthly-savings-title">חיסכון חודשי לפי תשואה היסטורית</h3>
-                    <ul class="list-disc space-y-2 text-center" id="monthly-savings-list">
-                        <li class="text-gray-600" id="monthly-savings-20-years">- מבוסס על ממוצע התשואה השנתית של 20 השנים האחרונות (9.27%): <span id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
-                        <li class="text-gray-600" id="monthly-savings-10-years">- מבוסס על ממוצע התשואה השנתית של 10 השנים האחרונות (12.43%): <span id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
-                        <li class="text-gray-600" id="monthly-savings-5-years">- מבוסס על ממוצע התשואה השנתית של 5 השנים האחרונות (14.9%): <span id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
+                    <h3 class="text-lg font-semibold text-gray-700 text-center">חיסכון חודשי לפי תשואה היסטורית</h3>
+                    <ul class="list-disc space-y-2 text-center text-gray-700">
+                        <li id="monthly-savings-20-years">- תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
+                        <li id="monthly-savings-10-years">- תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
+                        <li id="monthly-savings-5-years">- תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
                     </ul>
                 </div>
             </div>
-
-            <div class="text-center mt-8">
-                <p class="text-gray-600">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי.</p>
-                <p class="text-gray-600">אין לקחת בחשבון אינפלציה, מיסים או עמלות ניהול בתוצאות.</p>
-            </div>
         </div>
-
     </div>
 
     <script>
@@ -63,7 +57,6 @@
             const birthDateObject = new Date(year, month - 1, day);
             const today = new Date();
 
-            // חישוב גיל
             let age = today.getFullYear() - birthDateObject.getFullYear();
             const monthDifference = today.getMonth() - birthDateObject.getMonth();
             if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObject.getDate())) {
@@ -77,18 +70,18 @@
                 return;
             }
 
-            const targetSavings = 1000000.00; // 1,000,000.00 million shekels
-            const annualInterest20Years = 0.0927; // 9.27% annual interest
-            const annualInterest10Years = 0.1243; // 12.43% annual interest
-            const annualInterest5Years = 0.149; // 14.9% annual interest
+            const targetSavings = 1000000.00;
+            const annualInterest20Years = 0.0927;
+            const annualInterest10Years = 0.1243;
+            const annualInterest5Years = 0.149;
 
             const monthlySavings20Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest20Years);
             const monthlySavings10Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest10Years);
             const monthlySavings5Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest5Years);
 
-            monthlySavings20YearsValue.textContent = `${monthlySavings20Years.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-            monthlySavings10YearsValue.textContent = `${monthlySavings10Years.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-            monthlySavings5YearsValue.textContent = `${monthlySavings5Years.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+            monthlySavings20YearsValue.textContent = monthlySavings20Years.toFixed(2);
+            monthlySavings10YearsValue.textContent = monthlySavings10Years.toFixed(2);
+            monthlySavings5YearsValue.textContent = monthlySavings5Years.toFixed(2);
         });
 
         function calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest) {
