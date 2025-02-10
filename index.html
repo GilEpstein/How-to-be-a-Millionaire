@@ -83,18 +83,20 @@
             const annualInterest = 0.0927;
             const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
 
+            const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+
             const savingsOverTime = [];
             const depositsOverTime = [];
             let totalDeposits = 0;
 
             for (let i = 0; i < monthsUntilRetirement; i++) {
-                const futureValue = totalDeposits * (1 + monthlyInterest) + targetSavings * monthlyInterest;
+                totalDeposits += monthlySavings;
+                const futureValue = totalDeposits * Math.pow(1 + monthlyInterest, i + 1);
                 savingsOverTime.push(futureValue.toFixed(2));
-                totalDeposits += targetSavings / monthsUntilRetirement;
                 depositsOverTime.push(totalDeposits.toFixed(2));
             }
 
-            monthlySavings20YearsValue.textContent = (targetSavings / monthsUntilRetirement).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            monthlySavings20YearsValue.textContent = monthlySavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
             if (savingsChart) savingsChart.destroy();
             savingsChart = new Chart(ctx, {
