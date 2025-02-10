@@ -40,7 +40,6 @@
                 </div>
             </div>
             <canvas id="savingsChart" class="mt-6"></canvas>
-            <canvas id="depositsChart" class="mt-6"></canvas>
         </div>
     </div>
 
@@ -49,9 +48,8 @@
         const birthDateInput = document.getElementById('birth-date');
         const retirementAgeInput = document.getElementById('retirement-age');
         const ctxSavings = document.getElementById('savingsChart').getContext('2d');
-        const ctxDeposits = document.getElementById('depositsChart').getContext('2d');
 
-        let savingsChart, depositsChart;
+        let savingsChart;
 
         calculateButton.addEventListener('click', () => {
             if (!birthDateInput.value.match(/^\d{2}-\d{2}-\d{4}$/)) {
@@ -92,21 +90,15 @@
             }
 
             if (savingsChart) savingsChart.destroy();
-            if (depositsChart) depositsChart.destroy();
             
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
                     labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
-                    datasets: [{ label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 2, fill: false }]
-                }
-            });
-            
-            depositsChart = new Chart(ctxDeposits, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
-                    datasets: [{ label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 2, fill: false }]
+                    datasets: [
+                        { label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 2, fill: false },
+                        { label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 2, fill: false }
+                    ]
                 }
             });
         });
