@@ -47,9 +47,6 @@
         const calculateButton = document.getElementById('calculate-button');
         const birthDateInput = document.getElementById('birth-date');
         const retirementAgeInput = document.getElementById('retirement-age');
-        const monthlySavings20YearsValue = document.getElementById('monthly-savings-20-years-value');
-        const monthlySavings10YearsValue = document.getElementById('monthly-savings-10-years-value');
-        const monthlySavings5YearsValue = document.getElementById('monthly-savings-5-years-value');
         const ctx = document.getElementById('savingsChart').getContext('2d');
 
         let savingsChart;
@@ -68,38 +65,21 @@
             const today = new Date();
 
             let age = today.getFullYear() - birthDateObject.getFullYear();
-            const monthDifference = today.getMonth() - birthDateObject.getMonth();
-            const dayDifference = today.getDate() - birthDateObject.getDate();
-
-            if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
-                age--;
-            }
-
-            const retirementAge = parseInt(retirementAgeInput.value);
-            const monthsUntilRetirement = (retirementAge - age) * 12 + monthDifference;
+            const monthsUntilRetirement = (67 - age) * 12 + (12 - today.getMonth() + birthDateObject.getMonth());
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
             }
 
             const targetSavings = 1000000;
-            const annualInterest = 0.0927;
-            const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
+            const annualInterestRates = { 20: 0.0927, 10: 0.1243, 5: 0.149 };
+            const savingsValues = {};
 
-            const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-
-            const savingsOverTime = [];
-            const depositsOverTime = [];
-            let totalDeposits = 0;
-
-            for (let i = 0; i < monthsUntilRetirement; i++) {
-                totalDeposits += monthlySavings;
-                const futureValue = totalDeposits * Math.pow(1 + monthlyInterest, i + 1);
-                savingsOverTime.push(futureValue.toFixed(2));
-                depositsOverTime.push(totalDeposits.toFixed(2));
-            }
-
-            monthlySavings20YearsValue.textContent = monthlySavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            Object.keys(annualInterestRates).forEach(period => {
+                const monthlyInterest = Math.pow(1 + annualInterestRates[period], 1 / 12) - 1;
+                savingsValues[period] = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+                document.getElementById(`monthly-savings-${period}-years-value`).textContent = savingsValues[period].toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            });
 
             if (savingsChart) savingsChart.destroy();
             savingsChart = new Chart(ctx, {
@@ -109,15 +89,8 @@
                     datasets: [
                         {
                             label: 'צמיחת החיסכון',
-                            data: savingsOverTime,
+                            data: Array.from({ length: monthsUntilRetirement }, (_, i) => savingsValues[20] * (i + 1)),
                             borderColor: 'blue',
-                            borderWidth: 2,
-                            fill: false
-                        },
-                        {
-                            label: 'סה״כ הפקדות',
-                            data: depositsOverTime,
-                            borderColor: 'green',
                             borderWidth: 2,
                             fill: false
                         }
