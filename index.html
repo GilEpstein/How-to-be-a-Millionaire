@@ -48,12 +48,7 @@
         const birthDateInput = document.getElementById('birth-date');
         const retirementAgeInput = document.getElementById('retirement-age');
         const ctxSavings = document.getElementById('savingsChart').getContext('2d');
-        const savingsValues = {
-            20: 0.0927,
-            10: 0.1243,
-            5: 0.149
-        };
-
+        
         let savingsChart;
 
         calculateButton.addEventListener('click', () => {
@@ -78,17 +73,14 @@
             }
 
             const targetSavings = 1000000;
-            let savingsOverTime = [];
-            let depositsOverTime = [];
+            const annualInterest = 0.0927;
+            const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
+            const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+            
+            const savingsOverTime = [];
+            const depositsOverTime = [];
             let totalDeposits = 0;
             let accumulatedSavings = 0;
-            let monthlySavings;
-
-            Object.keys(savingsValues).forEach(period => {
-                const monthlyInterest = Math.pow(1 + savingsValues[period], 1 / 12) - 1;
-                monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-                document.getElementById(`monthly-savings-${period}-years-value`).textContent = monthlySavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            });
 
             for (let i = 0; i < monthsUntilRetirement; i++) {
                 totalDeposits += monthlySavings;
