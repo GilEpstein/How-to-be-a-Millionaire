@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>המסלול שלך למיליון</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gradient-to-r from-blue-100 to-blue-300 min-h-screen flex items-center justify-center" dir="rtl">
     <div class="container mx-auto px-6 py-10 max-w-3xl bg-white rounded-lg shadow-lg">
@@ -22,9 +23,9 @@
                     <input type="number" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-24 text-center" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
                 </div>
                 <div class="flex justify-center mt-6">
-                    <button class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors text-lg font-semibold" id="calculate-button">🔢 חשב</button>
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform active:scale-95 text-lg font-semibold" id="calculate-button">🔢 חשב</button>
                 </div>
-                <p class="text-gray-600 text-center mt-4 text-sm" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. מבוסס על תשואות היסטוריות של S&P500.</p>
+                <p class="text-gray-600 text-center mt-4 text-sm" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. מבוסס על תשואות היסטוריות של S&P500 בחישוב חודשי.</p>
             </div>
             
             <div class="space-y-4 mt-8">
@@ -38,6 +39,7 @@
                     </ul>
                 </div>
             </div>
+            <canvas id="savingsChart" class="mt-6"></canvas>
         </div>
     </div>
 
@@ -48,8 +50,16 @@
         const monthlySavings20YearsValue = document.getElementById('monthly-savings-20-years-value');
         const monthlySavings10YearsValue = document.getElementById('monthly-savings-10-years-value');
         const monthlySavings5YearsValue = document.getElementById('monthly-savings-5-years-value');
+        const ctx = document.getElementById('savingsChart').getContext('2d');
+
+        let savingsChart;
 
         calculateButton.addEventListener('click', () => {
+            if (!birthDateInput.value.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                alert('אנא הזן תאריך בפורמט יום-חודש-שנה');
+                return;
+            }
+            
             const birthDate = birthDateInput.value.split('-');
             const day = parseInt(birthDate[0]);
             const month = parseInt(birthDate[1]);
@@ -58,36 +68,38 @@
             const today = new Date();
 
             let age = today.getFullYear() - birthDateObject.getFullYear();
-            const monthDifference = today.getMonth() - birthDateObject.getMonth();
-            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDateObject.getDate())) {
+            if (today.getMonth() < birthDateObject.getMonth() || (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
                 age--;
             }
 
             const retirementAge = parseInt(retirementAgeInput.value);
-            const monthsUntilRetirement = (retirementAge - age) * 12 - today.getMonth() + birthDateObject.getMonth();
+            const monthsUntilRetirement = (retirementAge - age) * 12;
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
             }
 
-            const targetSavings = 1000000.00;
-            const annualInterest20Years = 0.0927;
-            const annualInterest10Years = 0.1243;
-            const annualInterest5Years = 0.149;
-
-            const monthlySavings20Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest20Years);
-            const monthlySavings10Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest10Years);
-            const monthlySavings5Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest5Years);
-
-            monthlySavings20YearsValue.textContent = monthlySavings20Years.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            monthlySavings10YearsValue.textContent = monthlySavings10Years.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            monthlySavings5YearsValue.textContent = monthlySavings5Years.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        });
-
-        function calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest) {
+            const targetSavings = 1000000;
+            const annualInterest = 0.0927;
             const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
-            return targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-        }
+
+            const savingsOverTime = Array.from({ length: monthsUntilRetirement }, (_, i) => (targetSavings * Math.pow(1 + monthlyInterest, i / 12)).toFixed(2));
+
+            if (savingsChart) savingsChart.destroy();
+            savingsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: savingsOverTime.map((_, i) => `חודש ${i + 1}`),
+                    datasets: [{
+                        label: 'צמיחת החיסכון',
+                        data: savingsOverTime,
+                        borderColor: 'blue',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                }
+            });
+        });
     </script>
 </body>
 </html>
