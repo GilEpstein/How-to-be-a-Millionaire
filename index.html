@@ -75,7 +75,12 @@
             if (today.getMonth() < birthDateObject.getMonth() || (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
                 age--;
             }
-            let monthsUntilRetirement = (retirementAge - age) * 12 + (birthDateObject.getMonth() - today.getMonth());
+            const currentMonth = today.getMonth();
+            const birthMonth = birthDateObject.getMonth();
+
+            let monthsUntilRetirement = (retirementAge - age) * 12;
+            monthsUntilRetirement -= currentMonth >= birthMonth ? currentMonth - birthMonth : 12 - (birthMonth - currentMonth);
+
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
