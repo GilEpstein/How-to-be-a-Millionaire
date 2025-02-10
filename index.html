@@ -79,9 +79,9 @@
             const monthlySavings10Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest10Years);
             const monthlySavings5Years = calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest5Years);
 
-            monthlySavings20YearsValue.textContent = monthlySavings20Years.toFixed(2);
-            monthlySavings10YearsValue.textContent = monthlySavings10Years.toFixed(2);
-            monthlySavings5YearsValue.textContent = monthlySavings5Years.toFixed(2);
+            monthlySavings20YearsValue.textContent = monthlySavings20Years.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            monthlySavings10YearsValue.textContent = monthlySavings10Years.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            monthlySavings5YearsValue.textContent = monthlySavings5Years.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         });
 
         function calculateMonthlySavings(targetSavings, monthsUntilRetirement, annualInterest) {
