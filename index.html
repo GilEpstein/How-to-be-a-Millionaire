@@ -77,6 +77,8 @@
             const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
             const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
             
+            document.getElementById('monthly-savings-20-years-value').textContent = monthlySavings.toFixed(2);
+            
             const savingsOverTime = [];
             const depositsOverTime = [];
             let totalDeposits = 0;
