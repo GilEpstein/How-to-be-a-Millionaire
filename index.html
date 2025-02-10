@@ -33,9 +33,9 @@
                 <div class="space-y-2" id="results">
                     <h3 class="text-lg font-semibold text-gray-700 text-center">חיסכון חודשי לפי תשואה היסטורית</h3>
                     <ul class="list-disc space-y-2 text-center text-gray-700">
-                        <li id="monthly-savings-20-years">- תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
-                        <li id="monthly-savings-10-years">- תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
-                        <li id="monthly-savings-5-years">- תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
+                        <li>- תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
+                        <li>- תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
+                        <li>- תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
                     </ul>
                 </div>
             </div>
@@ -48,6 +48,11 @@
         const birthDateInput = document.getElementById('birth-date');
         const retirementAgeInput = document.getElementById('retirement-age');
         const ctxSavings = document.getElementById('savingsChart').getContext('2d');
+        const savingsValues = {
+            20: 0.0927,
+            10: 0.1243,
+            5: 0.149
+        };
 
         let savingsChart;
 
@@ -66,21 +71,23 @@
             const retirementAge = parseInt(retirementAgeInput.value);
 
             let age = today.getFullYear() - birthDateObject.getFullYear();
-            const monthsUntilRetirement = (retirementAge - age) * 12 + (12 - today.getMonth() + birthDateObject.getMonth());
+            let monthsUntilRetirement = (retirementAge - age) * 12 - (today.getMonth() - birthDateObject.getMonth());
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
             }
 
             const targetSavings = 1000000;
-            const annualInterest = 0.0927;
-            const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
-            const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-            
-            const savingsOverTime = [];
-            const depositsOverTime = [];
+            let savingsOverTime = [];
+            let depositsOverTime = [];
             let totalDeposits = 0;
             let accumulatedSavings = 0;
+
+            Object.keys(savingsValues).forEach(period => {
+                const monthlyInterest = Math.pow(1 + savingsValues[period], 1 / 12) - 1;
+                const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+                document.getElementById(`monthly-savings-${period}-years-value`).textContent = monthlySavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            });
 
             for (let i = 0; i < monthsUntilRetirement; i++) {
                 totalDeposits += monthlySavings;
