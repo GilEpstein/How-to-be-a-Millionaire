@@ -82,10 +82,11 @@
             let depositsOverTime = [];
             let totalDeposits = 0;
             let accumulatedSavings = 0;
+            let monthlySavings;
 
             Object.keys(savingsValues).forEach(period => {
                 const monthlyInterest = Math.pow(1 + savingsValues[period], 1 / 12) - 1;
-                const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+                monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
                 document.getElementById(`monthly-savings-${period}-years-value`).textContent = monthlySavings.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             });
 
