@@ -68,12 +68,15 @@
             const today = new Date();
 
             let age = today.getFullYear() - birthDateObject.getFullYear();
-            if (today.getMonth() < birthDateObject.getMonth() || (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
+            const monthDifference = today.getMonth() - birthDateObject.getMonth();
+            const dayDifference = today.getDate() - birthDateObject.getDate();
+
+            if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
                 age--;
             }
 
             const retirementAge = parseInt(retirementAgeInput.value);
-            const monthsUntilRetirement = (retirementAge - age) * 12;
+            const monthsUntilRetirement = (retirementAge - age) * 12 + monthDifference;
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
