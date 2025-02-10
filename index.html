@@ -40,6 +40,7 @@
                 </div>
             </div>
             <canvas id="savingsChart" class="mt-6"></canvas>
+            <canvas id="depositsChart" class="mt-6"></canvas>
         </div>
     </div>
 
@@ -47,9 +48,10 @@
         const calculateButton = document.getElementById('calculate-button');
         const birthDateInput = document.getElementById('birth-date');
         const retirementAgeInput = document.getElementById('retirement-age');
-        const ctx = document.getElementById('savingsChart').getContext('2d');
+        const ctxSavings = document.getElementById('savingsChart').getContext('2d');
+        const ctxDeposits = document.getElementById('depositsChart').getContext('2d');
 
-        let savingsChart;
+        let savingsChart, depositsChart;
 
         calculateButton.addEventListener('click', () => {
             if (!birthDateInput.value.match(/^\d{2}-\d{2}-\d{4}$/)) {
@@ -63,38 +65,48 @@
             const year = parseInt(birthDate[2]);
             const birthDateObject = new Date(year, month - 1, day);
             const today = new Date();
+            const retirementAge = parseInt(retirementAgeInput.value);
 
             let age = today.getFullYear() - birthDateObject.getFullYear();
-            const monthsUntilRetirement = (67 - age) * 12 + (12 - today.getMonth() + birthDateObject.getMonth());
+            const monthsUntilRetirement = (retirementAge - age) * 12 + (12 - today.getMonth() + birthDateObject.getMonth());
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
                 return;
             }
 
             const targetSavings = 1000000;
-            const annualInterestRates = { 20: 0.0927, 10: 0.1243, 5: 0.149 };
-            const savingsValues = {};
+            const annualInterest = 0.0927;
+            const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
+            const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+            
+            const savingsOverTime = [];
+            const depositsOverTime = [];
+            let totalDeposits = 0;
+            let accumulatedSavings = 0;
 
-            Object.keys(annualInterestRates).forEach(period => {
-                const monthlyInterest = Math.pow(1 + annualInterestRates[period], 1 / 12) - 1;
-                savingsValues[period] = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-                document.getElementById(`monthly-savings-${period}-years-value`).textContent = savingsValues[period].toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            });
+            for (let i = 0; i < monthsUntilRetirement; i++) {
+                totalDeposits += monthlySavings;
+                accumulatedSavings = accumulatedSavings * (1 + monthlyInterest) + monthlySavings;
+                savingsOverTime.push(accumulatedSavings.toFixed(2));
+                depositsOverTime.push(totalDeposits.toFixed(2));
+            }
 
             if (savingsChart) savingsChart.destroy();
-            savingsChart = new Chart(ctx, {
+            if (depositsChart) depositsChart.destroy();
+            
+            savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
                     labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
-                    datasets: [
-                        {
-                            label: 'צמיחת החיסכון',
-                            data: Array.from({ length: monthsUntilRetirement }, (_, i) => savingsValues[20] * (i + 1)),
-                            borderColor: 'blue',
-                            borderWidth: 2,
-                            fill: false
-                        }
-                    ]
+                    datasets: [{ label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 2, fill: false }]
+                }
+            });
+            
+            depositsChart = new Chart(ctxDeposits, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
+                    datasets: [{ label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 2, fill: false }]
                 }
             });
         });
