@@ -32,13 +32,14 @@
                 <h2 class="text-lg font-semibold text-gray-700 text-center">תוצאות</h2>
                 <div class="space-y-2" id="results">
                     <h3 class="text-lg font-semibold text-gray-700 text-center">חיסכון חודשי לפי תשואה היסטורית</h3>
-                    <ul class="list-disc space-y-2 text-center text-gray-700">
-                        <li>- תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
-                        <li>- תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
-                        <li>- תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
+                    <ul class="space-y-2 text-center text-gray-700">
+                        <li>תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
+                        <li>תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
+                        <li>תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
                     </ul>
                 </div>
             </div>
+            <h3 class="text-lg font-semibold text-gray-700 text-center mt-6">צפה בנתונים המדויקים על ידי מעבר עם הסמן מעל הגרף</h3>
             <canvas id="savingsChart" class="mt-6"></canvas>
         </div>
     </div>
@@ -115,9 +116,19 @@
                 data: {
                     labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
                     datasets: [
-                        { label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 2, fill: false },
-                        { label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 2, fill: false }
+                        { label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 1, fill: false },
+                        { label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 1, fill: false }
                     ]
+                },
+                options: {
+                    plugins: {
+                        tooltip: {
+                            enabled: true,
+                            callbacks: {
+                                label: (tooltipItem) => `ערך: ${tooltipItem.raw} ש"ח`
+                            }
+                        }
+                    }
                 }
             });
         });
