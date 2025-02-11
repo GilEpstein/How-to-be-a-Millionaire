@@ -7,36 +7,54 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gradient-to-r from-blue-200 to-blue-400 min-h-screen flex items-center justify-center p-6" dir="rtl">
-    <div class="container mx-auto px-6 py-10 max-w-3xl bg-white rounded-xl shadow-xl">
-        <h1 class="text-4xl font-bold text-gray-800 mb-2 text-center">המסלול שלך למיליון</h1>
+<body class="bg-gradient-to-r from-blue-100 to-blue-300 min-h-screen flex items-center justify-center" dir="rtl">
+    <div class="container mx-auto px-6 py-10 max-w-3xl bg-white rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
         <h2 class="text-lg font-semibold text-gray-600 text-center mb-6">@פרופ' גיל</h2>
-        <p class="text-gray-700 text-center mb-6 text-md leading-relaxed">
-            חשב כמה כסף עליך לחסוך מהיום כדי להגיע למיליון ש"ח בגיל שתבחר, על בסיס השקעה ב-S&P 500.
+        <p class="text-gray-700 text-center mb-6 text-md">
+            האפליקציה "המסלול שלך למיליון" מחשבת כמה כסף עליך לחסוך מהיום כדי להגיע למיליון ש"ח בגיל שתבחר, באמצעות השקעה במדד S&P 500.
         </p>
-        
-        <div class="bg-white rounded-lg shadow-md p-6 space-y-6">
-            <h2 class="text-xl font-semibold text-gray-700 text-center">הזן פרטים</h2>
-            <div class="flex flex-col items-center space-y-4">
-                <input type="text" id="birth-date" placeholder="יום-חודש-שנה" 
-                    class="bg-gray-50 border border-gray-300 p-3 rounded-md w-64 text-center shadow-sm focus:ring-2 focus:ring-blue-500" />
-                <input type="number" id="retirement-age" placeholder="67" min="1" max="120" value="67"
-                    class="bg-gray-50 border border-gray-300 p-3 rounded-md w-24 text-center shadow-sm focus:ring-2 focus:ring-blue-500" />
-                <button id="calculate-button"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transform active:scale-95 transition-all text-lg font-semibold">
-                    🔢 חשב
-                </button>
+<div class="bg-white rounded-lg shadow-md p-6">
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold text-gray-700 text-center">איך זה עובד?</h2>
+                <ul class="list-none space-y-2 text-gray-700 text-md">
+                    <li>✅ הכנס את תאריך הלידה שלך.</li>
+                    <li>✅ בחר את הגיל שבו תרצה להגיע למיליון.</li>
+                    <li>✅ קבל חישוב של החיסכון החודשי הנדרש, לפי שלושה תרחישים של תשואות היסטוריות של S&P 500.</li>
+                    <li>✅ גרף דינמי מציג את צמיחת החיסכון שלך ואת סך ההפקדות עד לגיל היעד.</li>
+                </ul>
+                <p class="text-gray-600 text-center mt-4 text-sm">⚠️ החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. ואינם כולל מיסים, אינפלציה או עמלות ניהול⚠️</p>
             </div>
-        </div>
 
-        <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-700 text-center">תוצאות</h2>
-            <div id="results" class="text-center text-gray-700 mt-4">
-                <p>תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</p>
-                <p>תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</p>
-                <p>תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</p>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold text-gray-700 text-center">הכנס את תאריך הלידה שלך</h2>
+                <div class="flex justify-center">
+                    <input type="text" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-64 text-center" id="birth-date" placeholder="יום-חודש-שנה" />
+                </div>
+                <h2 class="text-lg font-semibold text-gray-700 text-center mt-4">בחר באיזה גיל תרצה להגיע למיליון ש"ח</h2>
+                <div class="flex justify-center">
+                    <input type="number" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-24 text-center" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
+                </div>
+                <div class="flex justify-center mt-6">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform active:scale-95 text-lg font-semibold" id="calculate-button">🔢 חשב</button>
+                </div>
+                
             </div>
-            <h3 class="text-md font-semibold text-gray-700 text-center mt-6">🔍 עבור עם העכבר מעל הגרף</h3>
+            
+            <div class="space-y-4 mt-8">
+                <h2 class="text-lg font-semibold text-gray-700 text-center">תוצאות</h2>
+                <div class="space-y-2" id="results">
+                    <h3 class="text-lg font-semibold text-gray-700 text-center">חיסכון חודשי לפי תשואה היסטורית</h3>
+                    <ul class="space-y-2 text-center text-gray-700">
+                        <li>תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
+                        <li>תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
+                        <li>תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
+                    </ul>
+                </div>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-700 text-center mt-6">צפה בנתונים המדויקים על ידי מעבר עם הסמן מעל הגרף</h3>
             <canvas id="savingsChart" class="mt-6"></canvas>
         </div>
     </div>
@@ -61,12 +79,22 @@
             }
 
             const birthDate = birthDateInput.value.split('-');
-            const birthYear = parseInt(birthDate[2]);
+            const day = parseInt(birthDate[0]);
+            const month = parseInt(birthDate[1]);
+            const year = parseInt(birthDate[2]);
+            const birthDateObject = new Date(year, month - 1, day);
             const today = new Date();
             const retirementAge = parseInt(retirementAgeInput.value);
 
-            const age = today.getFullYear() - birthYear;
-            const monthsUntilRetirement = (retirementAge - age) * 12;
+            let age = today.getFullYear() - birthDateObject.getFullYear();
+            if (today.getMonth() < birthDateObject.getMonth() || (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
+                age--;
+            }
+            const currentMonth = today.getMonth();
+            const birthMonth = birthDateObject.getMonth();
+
+            let monthsUntilRetirement = (retirementAge - age) * 12;
+            monthsUntilRetirement -= currentMonth >= birthMonth ? currentMonth - birthMonth : 12 - (birthMonth - currentMonth);
 
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
@@ -76,12 +104,29 @@
             const targetSavings = 1000000;
             const savingsOverTime = [];
             const depositsOverTime = [];
+            let totalDeposits = 0;
 
             Object.keys(interestRates).forEach((key) => {
                 const annualInterest = interestRates[key];
                 const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
                 const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-                document.getElementById(`monthly-savings-${key}-value`).textContent = monthlySavings.toFixed(2);
+
+                document.getElementById(`monthly-savings-${key}-value`).textContent = monthlySavings.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+                // Calculate cumulative savings and deposits for the graph
+                totalDeposits = 0;
+                let accumulatedSavings = 0;
+                for (let i = 0; i < monthsUntilRetirement; i++) {
+                    totalDeposits += monthlySavings;
+                    accumulatedSavings = accumulatedSavings * (1 + monthlyInterest) + monthlySavings;
+                    if (key === "20-years") {
+                        savingsOverTime.push(accumulatedSavings.toFixed(2));
+                        depositsOverTime.push(totalDeposits.toFixed(2));
+                    }
+                }
             });
 
             if (savingsChart) savingsChart.destroy();
