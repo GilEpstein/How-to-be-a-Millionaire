@@ -73,17 +73,28 @@
             const birthDateParts = birthDateInput.split('-');
             const birthYear = parseInt(birthDateParts[2]);
             const birthMonth = parseInt(birthDateParts[1]) - 1;
-            const birthDay = parseInt(birthDateParts[0]);
             
             const monthsUntilRetirement = ((retirementAge - (today.getFullYear() - birthYear)) * 12) - today.getMonth() + birthMonth;
             const targetSavings = 1000000;
             const interestRates = { "20-years": 0.0927, "10-years": 0.1243, "5-years": 0.149 };
             
-            Object.keys(interestRates).forEach((key) => {
-                const annualInterest = interestRates[key];
-                const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
-                const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-                document.getElementById(`monthly-savings-${key}-value`).textContent = monthlySavings.toFixed(2);
+            const ctx = document.getElementById('savingsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [...Array(monthsUntilRetirement).keys()],
+                    datasets: [{
+                        label: 'צמיחת החיסכון',
+                        data: [...Array(monthsUntilRetirement).keys()].map(i => targetSavings * Math.pow(1 + 0.007, i)),
+                        borderColor: 'blue',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
             });
         });
     </script>
