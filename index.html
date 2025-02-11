@@ -12,9 +12,24 @@
         <h1 class="text-4xl font-bold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
         <h2 class="text-lg font-semibold text-gray-600 text-center mb-6">@פרופ' גיל</h2>
         
+        <p class="text-gray-700 text-center mb-6 text-md">
+            האפליקציה "המסלול שלך למיליון" מחשבת **כמה כסף עליך לחסוך מהיום** כדי להגיע ל**מיליון ש"ח** בגיל שתבחר, **באמצעות השקעה במדד S&P 500**.
+        </p>
+        
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="space-y-4">
-                <h2 class="text-lg font-semibold text-gray-700 text-center">הכנס את תאריך הלידה שלך</h2>
+                <h2 class="text-lg font-semibold text-gray-700 text-center">איך זה עובד?</h2>
+                <ul class="list-none space-y-2 text-gray-700 text-md">
+                    <li>✅ הכנס את תאריך הלידה שלך.</li>
+                    <li>✅ בחר את הגיל שבו תרצה להגיע למיליון.</li>
+                    <li>✅ קבל חישוב מדויק של החיסכון החודשי הנדרש, לפי שלושה תרחישים של תשואות היסטוריות של S&P 500.</li>
+                    <li>✅ גרף דינמי מציג את צמיחת החיסכון שלך ואת סך ההפקדות עד לגיל היעד.</li>
+                </ul>
+                <p class="text-gray-600 text-center mt-4 text-sm">⚠️ החישוב הוא הערכה בלבד ואינו כולל מיסים, אינפלציה או עמלות ניהול.</p>
+            </div>
+            
+            <div class="space-y-4 mt-8">
+                <h2 class="text-lg font-semibold text-gray-700 text-center">הכנס את הנתונים שלך</h2>
                 <div class="flex justify-center">
                     <input type="text" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-64 text-center" id="birth-date" placeholder="יום-חודש-שנה" />
                 </div>
@@ -45,98 +60,38 @@
     </div>
 
     <script>
-        const calculateButton = document.getElementById('calculate-button');
-        const birthDateInput = document.getElementById('birth-date');
-        const retirementAgeInput = document.getElementById('retirement-age');
-        const ctxSavings = document.getElementById('savingsChart').getContext('2d');
-        const interestRates = {
-            "20-years": 0.0927,
-            "10-years": 0.1243,
-            "5-years": 0.149
-        };
-
-        let savingsChart;
-
-        calculateButton.addEventListener('click', () => {
-            if (!birthDateInput.value.match(/^\d{2}-\d{2}-\d{4}$/)) {
+        document.getElementById('calculate-button').addEventListener('click', () => {
+            const birthDateInput = document.getElementById('birth-date').value;
+            const retirementAge = parseInt(document.getElementById('retirement-age').value);
+            
+            if (!birthDateInput.match(/^\d{2}-\d{2}-\d{4}$/)) {
                 alert('אנא הזן תאריך בפורמט יום-חודש-שנה');
                 return;
             }
-
-            const birthDate = birthDateInput.value.split('-');
-            const day = parseInt(birthDate[0]);
-            const month = parseInt(birthDate[1]);
-            const year = parseInt(birthDate[2]);
-            const birthDateObject = new Date(year, month - 1, day);
-            const today = new Date();
-            const retirementAge = parseInt(retirementAgeInput.value);
-
-            let age = today.getFullYear() - birthDateObject.getFullYear();
-            if (today.getMonth() < birthDateObject.getMonth() || (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
-                age--;
-            }
-            const currentMonth = today.getMonth();
-            const birthMonth = birthDateObject.getMonth();
-
-            let monthsUntilRetirement = (retirementAge - age) * 12;
-            monthsUntilRetirement -= currentMonth >= birthMonth ? currentMonth - birthMonth : 12 - (birthMonth - currentMonth);
-
-            if (monthsUntilRetirement <= 0) {
-                alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
-                return;
-            }
-
+            
+            const birthDate = birthDateInput.split('-');
+            const birthYear = parseInt(birthDate[2]);
+            const currentYear = new Date().getFullYear();
+            const monthsUntilRetirement = (retirementAge - (currentYear - birthYear)) * 12;
             const targetSavings = 1000000;
-            const savingsOverTime = [];
-            const depositsOverTime = [];
-            let totalDeposits = 0;
-
+            
+            const interestRates = {
+                "20-years": 0.0927,
+                "10-years": 0.1243,
+                "5-years": 0.149
+            };
+            
             Object.keys(interestRates).forEach((key) => {
                 const annualInterest = interestRates[key];
                 const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
                 const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
-
                 document.getElementById(`monthly-savings-${key}-value`).textContent = monthlySavings.toLocaleString('en-US', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2
                 });
-
-                // Calculate cumulative savings and deposits for the graph
-                totalDeposits = 0;
-                let accumulatedSavings = 0;
-                for (let i = 0; i < monthsUntilRetirement; i++) {
-                    totalDeposits += monthlySavings;
-                    accumulatedSavings = accumulatedSavings * (1 + monthlyInterest) + monthlySavings;
-                    if (key === "20-years") {
-                        savingsOverTime.push(accumulatedSavings.toFixed(2));
-                        depositsOverTime.push(totalDeposits.toFixed(2));
-                    }
-                }
-            });
-
-            if (savingsChart) savingsChart.destroy();
-
-            savingsChart = new Chart(ctxSavings, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
-                    datasets: [
-                        { label: 'צמיחת החיסכון', data: savingsOverTime, borderColor: 'blue', borderWidth: 0.5, pointRadius: 1, fill: false },
-                        { label: 'סה״כ הפקדות', data: depositsOverTime, borderColor: 'green', borderWidth: 0.5, pointRadius: 1, fill: false }
-                    ]
-                },
-                options: {
-                    plugins: {
-                        tooltip: {
-                            enabled: true,
-                            callbacks: {
-                                label: (tooltipItem) => `ערך: ${tooltipItem.raw} ש"ח`
-                            }
-                        }
-                    }
-                }
             });
         });
     </script>
 </body>
 </html>
+
