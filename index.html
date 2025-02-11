@@ -61,7 +61,35 @@
 
     <script>
         document.getElementById('calculate-button').addEventListener('click', () => {
-            alert('החישוב יתבצע כאן - צריך להוסיף את הסקריפט המתאים!');
+            const birthDateInput = document.getElementById('birth-date').value;
+            const retirementAge = parseInt(document.getElementById('retirement-age').value);
+            
+            if (!birthDateInput.match(/^\d{2}-\d{2}-\d{4}$/)) {
+                alert('אנא הזן תאריך בפורמט יום-חודש-שנה');
+                return;
+            }
+            
+            const birthDate = birthDateInput.split('-');
+            const birthYear = parseInt(birthDate[2]);
+            const currentYear = new Date().getFullYear();
+            const monthsUntilRetirement = (retirementAge - (currentYear - birthYear)) * 12;
+            const targetSavings = 1000000;
+            
+            const interestRates = {
+                "20-years": 0.0927,
+                "10-years": 0.1243,
+                "5-years": 0.149
+            };
+            
+            Object.keys(interestRates).forEach((key) => {
+                const annualInterest = interestRates[key];
+                const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
+                const monthlySavings = targetSavings * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+                document.getElementById(`monthly-savings-${key}-value`).textContent = monthlySavings.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            });
         });
     </script>
 </body>
