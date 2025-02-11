@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="he">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>המסלול שלך למיליון</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-gradient-to-r from-blue-200 to-blue-400 min-h-screen flex items-center justify-center p-6" dir="rtl">
-    <div class="container mx-auto px-6 py-10 max-w-2xl bg-white rounded-2xl shadow-xl">
-        <h1 class="text-4xl font-extrabold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
+<p class="text-red-600 text-center text-sm font-semibold mt-2">⚠️ החישובים הם בגדר הערכה בלבד, אינם ייעוץ פיננסי ואינם כוללים מסים, אינפלציה או עמלות ⚠️</p>
+
+<h1 class="text-4xl font-extrabold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
         <h2 class="text-lg font-semibold text-gray-600 text-center mb-6">@פרופ' גיל</h2>
         <p class="text-gray-700 text-center mb-6 text-md">
             גלה כמה עליך לחסוך מדי חודש כדי להגיע למיליון ש"ח בגיל היעד שלך, בהתבסס על תשואות S&P 500.
@@ -23,14 +14,14 @@
                 <li>📈 קבל חישוב של החיסכון החודשי בשלושה תרחישים.</li>
                 <li>📊 גרף דינמי יציג את צמיחת החיסכון שלך.</li>
             </ul>
-            <p class="text-gray-500 text-center mt-4 text-sm">⚠️ חישוב זה הינו הערכה בלבד ואינו כולל מסים, אינפלציה או עמלות.</p>
+            
         </div>
 
-        <div class="mt-8 bg-white rounded-lg p-6 shadow-md"><p class="text-red-600 text-center text-sm font-semibold mt-2">⚠️ החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי ⚠️</p>
+        <div class="mt-8 bg-white rounded-lg p-6 shadow-md">
             <h2 class="text-lg font-semibold text-gray-700 text-center">הזן פרטים</h2>
             <div class="mt-4 space-y-4">
-                <input type="text" class="w-full p-3 border rounded-md shadow-sm text-center focus:ring-2 focus:ring-blue-500" id="birth-date" placeholder="יום-חודש-שנה" />
-                <input type="number" class="w-full p-3 border rounded-md shadow-sm text-center focus:ring-2 focus:ring-blue-500" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
+                <input type="text" class="w-full p-3 border rounded-md shadow-sm text-center" id="birth-date" placeholder="יום-חודש-שנה" />
+                <input type="number" class="w-full p-3 border rounded-md shadow-sm text-center" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
                 <button class="w-full bg-blue-600 text-white py-3 rounded-md shadow-lg hover:bg-blue-700 transition-transform transform active:scale-95 text-lg font-semibold" id="calculate-button">🔢 חשב</button>
             </div>
         </div>
@@ -51,6 +42,7 @@
         const birthDateInput = document.getElementById('birth-date');
         const retirementAgeInput = document.getElementById('retirement-age');
         const ctxSavings = document.getElementById('savingsChart').getContext('2d');
+        const interestRates = { "20-years": 0.0927, "10-years": 0.1243, "5-years": 0.149 };
         let savingsChart;
 
         calculateButton.addEventListener('click', () => {
@@ -59,26 +51,26 @@
                 return;
             }
             
+            const birthDateParts = birthDateInput.value.split('-');
+            const birthYear = parseInt(birthDateParts[2]);
+            const today = new Date();
+            const retirementAge = parseInt(retirementAgeInput.value);
+            let age = today.getFullYear() - birthYear;
+            let monthsUntilRetirement = (retirementAge - age) * 12;
+            if (monthsUntilRetirement <= 0) {
+                alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
+                return;
+            }
+            
             if (savingsChart) savingsChart.destroy();
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
-                    labels: Array.from({ length: 240 }, (_, i) => `חודש ${i + 1}`),
+                    labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
                     datasets: [
-                        { label: 'צמיחת החיסכון', data: Array(240).fill().map(() => Math.random() * 100000), borderColor: 'rgba(59, 130, 246, 0.7)', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderWidth: 2, pointRadius: 0, tension: 0.4 },
-                        { label: 'סה״כ הפקדות', data: Array(240).fill().map(() => Math.random() * 50000), borderColor: 'rgba(34, 197, 94, 0.7)', backgroundColor: 'rgba(34, 197, 94, 0.1)', borderWidth: 2, pointRadius: 0, tension: 0.4 }
+                        { label: 'צמיחת החיסכון', data: Array(monthsUntilRetirement).fill().map((_, i) => i * 1000), borderColor: 'blue', borderWidth: 2, pointRadius: 0 },
+                        { label: 'סה״כ הפקדות', data: Array(monthsUntilRetirement).fill().map((_, i) => i * 500), borderColor: 'green', borderWidth: 2, pointRadius: 0 }
                     ]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { labels: { font: { size: 14 } } },
-                        tooltip: { enabled: true, callbacks: { label: (tooltipItem) => `₪${tooltipItem.raw.toLocaleString()}` } }
-                    },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { color: "rgba(200, 200, 200, 0.3)" } }
-                    }
                 }
             });
         });
