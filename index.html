@@ -35,6 +35,11 @@
 
         <div class="mt-8 bg-white rounded-lg p-6 shadow-md">
             <h2 class="text-lg font-semibold text-gray-700 text-center">תוצאות</h2>
+            <ul class="space-y-2 text-center text-gray-700 mt-4">
+                <li>📉 תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
+                <li>📊 תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
+                <li>🚀 תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
+            </ul>
             <canvas id="savingsChart" class="mt-6 bg-gray-50 rounded-lg shadow-sm"></canvas>
         </div>
     </div>
@@ -63,14 +68,20 @@
                 return;
             }
             
+            Object.keys(interestRates).forEach((key) => {
+                const monthlyInterest = Math.pow(1 + interestRates[key], 1 / 12) - 1;
+                const monthlySavings = 1000000 * monthlyInterest / (Math.pow(1 + monthlyInterest, monthsUntilRetirement) - 1);
+                document.getElementById(`monthly-savings-${key}-value`).textContent = monthlySavings.toFixed(2);
+            });
+            
             if (savingsChart) savingsChart.destroy();
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
                     labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
                     datasets: [
-                        { label: 'צמיחת החיסכון', data: Array(monthsUntilRetirement).fill().map((_, i) => i * 1000), borderColor: 'blue', borderWidth: 2, pointRadius: 0 },
-                        { label: 'סה״כ הפקדות', data: Array(monthsUntilRetirement).fill().map((_, i) => i * 500), borderColor: 'green', borderWidth: 2, pointRadius: 0 }
+                        { label: 'צמיחת החיסכון', data: Array.from({ length: monthsUntilRetirement }, (_, i) => i * 1000), borderColor: 'blue', borderWidth: 2, pointRadius: 0 },
+                        { label: 'סה״כ הפקדות', data: Array.from({ length: monthsUntilRetirement }, (_, i) => i * 500), borderColor: 'green', borderWidth: 2, pointRadius: 0 }
                     ]
                 }
             });
