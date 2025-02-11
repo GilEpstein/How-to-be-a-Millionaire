@@ -71,19 +71,14 @@
             }
             
             const birthDateParts = birthDateInput.split('-');
-            const birthDay = parseInt(birthDateParts[0]);
-            const birthMonth = parseInt(birthDateParts[1]) - 1;
             const birthYear = parseInt(birthDateParts[2]);
+            const birthMonth = parseInt(birthDateParts[1]) - 1;
+            const birthDay = parseInt(birthDateParts[0]);
             
-            const birthDate = new Date(birthYear, birthMonth, birthDay);
-            let age = today.getFullYear() - birthYear;
-            if (today.getMonth() < birthMonth || (today.getMonth() === birthMonth && today.getDate() < birthDay)) {
-                age--;
-            }
-            const monthsUntilRetirement = (retirementAge - age) * 12 - today.getMonth() + birthMonth;
-            
+            const monthsUntilRetirement = ((retirementAge - (today.getFullYear() - birthYear)) * 12) - today.getMonth() + birthMonth;
             const targetSavings = 1000000;
             const interestRates = { "20-years": 0.0927, "10-years": 0.1243, "5-years": 0.149 };
+            
             Object.keys(interestRates).forEach((key) => {
                 const annualInterest = interestRates[key];
                 const monthlyInterest = Math.pow(1 + annualInterest, 1 / 12) - 1;
