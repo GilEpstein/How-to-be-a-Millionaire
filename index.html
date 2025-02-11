@@ -1,10 +1,18 @@
-<p class="text-red-600 text-center text-sm font-semibold mt-2">⚠️ החישובים הם בגדר הערכה בלבד, אינם ייעוץ פיננסי ואינם כוללים מסים, אינפלציה או עמלות ⚠️</p>
-
-<h1 class="text-4xl font-extrabold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המסלול שלך למיליון</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-200 to-blue-400 min-h-screen flex items-center justify-center p-6" dir="rtl">
+    <div class="container mx-auto px-6 py-10 max-w-2xl bg-white rounded-2xl shadow-xl">
+        <p class="text-red-600 text-center text-sm font-semibold mt-2">⚠️ החישובים הם בגדר הערכה בלבד, אינם ייעוץ פיננסי ואינם כוללים מסים, אינפלציה או עמלות ⚠️</p>
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
         <h2 class="text-lg font-semibold text-gray-600 text-center mb-6">@פרופ' גיל</h2>
-        <p class="text-gray-700 text-center mb-6 text-md">
-            גלה כמה עליך לחסוך מדי חודש כדי להגיע למיליון ש"ח בגיל היעד שלך, בהתבסס על תשואות S&P 500.
-        </p>
+        <p class="text-gray-700 text-center mb-6 text-md"> גלה כמה עליך לחסוך מדי חודש כדי להגיע למיליון ש"ח בגיל היעד שלך, בהתבסס על תשואות S&P 500.</p>
         
         <div class="bg-gray-100 p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold text-gray-700 text-center mb-4">איך זה עובד?</h2>
@@ -14,7 +22,6 @@
                 <li>📈 קבל חישוב של החיסכון החודשי בשלושה תרחישים.</li>
                 <li>📊 גרף דינמי יציג את צמיחת החיסכון שלך.</li>
             </ul>
-            
         </div>
 
         <div class="mt-8 bg-white rounded-lg p-6 shadow-md">
@@ -28,11 +35,6 @@
 
         <div class="mt-8 bg-white rounded-lg p-6 shadow-md">
             <h2 class="text-lg font-semibold text-gray-700 text-center">תוצאות</h2>
-            <ul class="space-y-2 text-center text-gray-700 mt-4">
-                <li>📉 תשואה 20 שנים (9.27%): <span class="font-bold text-blue-600" id="monthly-savings-20-years-value">0.00</span> ש"ח</li>
-                <li>📊 תשואה 10 שנים (12.43%): <span class="font-bold text-blue-600" id="monthly-savings-10-years-value">0.00</span> ש"ח</li>
-                <li>🚀 תשואה 5 שנים (14.9%): <span class="font-bold text-blue-600" id="monthly-savings-5-years-value">0.00</span> ש"ח</li>
-            </ul>
             <canvas id="savingsChart" class="mt-6 bg-gray-50 rounded-lg shadow-sm"></canvas>
         </div>
     </div>
@@ -51,8 +53,7 @@
                 return;
             }
             
-            const birthDateParts = birthDateInput.value.split('-');
-            const birthYear = parseInt(birthDateParts[2]);
+            const birthYear = parseInt(birthDateInput.value.split('-')[2]);
             const today = new Date();
             const retirementAge = parseInt(retirementAgeInput.value);
             let age = today.getFullYear() - birthYear;
