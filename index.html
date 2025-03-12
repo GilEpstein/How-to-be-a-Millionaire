@@ -7,9 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gradient-to-r from-blue-100 to-blue-300 min-h-screen flex items-center justify-center" dir="rtl">
-    <div class="container mx-auto px-6 py-10 max-w-3xl bg-white rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold text-gray-800 mb-4 text-center">המסלול שלך למיליון</h1>
+<body class="bg-gradient-to-r from-blue-50 to-blue-200 min-h-screen flex items-center justify-center" dir="rtl">
+    <div class="container mx-auto px-6 py-10 max-w-3xl bg-white rounded-xl shadow-xl">
+        <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-l from-blue-600 to-blue-800 mb-4 text-center">המסלול שלך למיליון</h1>
         <h2 class="text-lg font-semibold text-gray-600 text-center mb-6">@פרופ' גיל</h2>
         
         <!-- קישורים לקבוצת הווטסאפ ולאתר - גרסה קטנה יותר -->
@@ -28,36 +28,36 @@
             </a>
         </div>
         
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 border border-blue-100">
             <div class="space-y-4">
                 <h2 class="text-lg font-semibold text-gray-700 text-center">הכנס את תאריך הלידה שלך</h2>
                 
                 <!-- New Date Input Fields -->
                 <div class="flex justify-center gap-4">
-                    <div class="w-20">
-                        <label class="block text-sm text-gray-600 text-center mb-1">יום</label>
+                    <div class="w-20 input-group">
+                        <label class="block text-sm font-medium text-blue-600 text-center mb-1">יום</label>
                         <input type="number" 
-                               class="w-full px-3 py-2 border rounded-md text-center bg-gray-50" 
+                               class="w-full px-3 py-2 border border-blue-200 rounded-md text-center bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all" 
                                id="birth-day"
                                min="1"
                                max="31"
                                placeholder="יום" />
                     </div>
                     
-                    <div class="w-20">
-                        <label class="block text-sm text-gray-600 text-center mb-1">חודש</label>
+                    <div class="w-20 input-group">
+                        <label class="block text-sm font-medium text-blue-600 text-center mb-1">חודש</label>
                         <input type="number" 
-                               class="w-full px-3 py-2 border rounded-md text-center bg-gray-50" 
+                               class="w-full px-3 py-2 border border-blue-200 rounded-md text-center bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all" 
                                id="birth-month"
                                min="1"
                                max="12"
                                placeholder="חודש" />
                     </div>
                     
-                    <div class="w-24">
-                        <label class="block text-sm text-gray-600 text-center mb-1">שנה</label>
+                    <div class="w-24 input-group">
+                        <label class="block text-sm font-medium text-blue-600 text-center mb-1">שנה</label>
                         <input type="number" 
-                               class="w-full px-3 py-2 border rounded-md text-center bg-gray-50" 
+                               class="w-full px-3 py-2 border border-blue-200 rounded-md text-center bg-blue-50 focus:ring-2 focus:ring-blue-300 transition-all" 
                                id="birth-year"
                                min="1900"
                                max="2024"
@@ -70,7 +70,7 @@
                     <input type="number" class="bg-gray-50 border border-gray-300 p-3 rounded-md shadow-sm w-24 text-center" id="retirement-age" placeholder="67" min="1" max="120" value="67" />
                 </div>
                 <div class="flex justify-center mt-6">
-                    <button class="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-transform transform active:scale-95 text-lg font-semibold" id="calculate-button">🔢 חשב</button>
+                    <button class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-full shadow-lg hover:from-blue-700 hover:to-blue-900 transition-all transform active:scale-95 text-lg font-semibold" id="calculate-button">🔢 חשב</button>
                 </div>
                 <p class="text-gray-600 text-center mt-4 text-sm" id="explanation">החישובים הם בגדר הערכה בלבד ואינם ייעוץ פיננסי. מבוסס על תשואות היסטוריות של S&P500 בחישוב חודשי.</p>
             </div>
@@ -100,6 +100,21 @@
         </div>
     </div>
 
+    <style>
+        input:focus, button:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .input-group:hover {
+            transform: translateY(-2px);
+        }
+        
+        .input-group {
+            transition: all 0.3s ease;
+        }
+    </style>
     <script>
         const calculateButton = document.getElementById('calculate-button');
         const birthDayInput = document.getElementById('birth-day');
