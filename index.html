@@ -251,15 +251,34 @@
             const today = new Date();
             const retirementAge = parseInt(retirementAgeInput.value);
 
+            // חישוב גיל נוכחי מדויק
             let age = today.getFullYear() - birthDateObject.getFullYear();
-            if (today.getMonth() < birthDateObject.getMonth() || (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
+            if (today.getMonth() < birthDateObject.getMonth() || 
+                (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
                 age--;
             }
-            const currentMonth = today.getMonth();
-            const birthMonth = birthDateObject.getMonth();
-
+            
+            // חישוב חודשי ההפרש עד גיל הפרישה
             let monthsUntilRetirement = (retirementAge - age) * 12;
-            monthsUntilRetirement -= currentMonth >= birthMonth ? currentMonth - birthMonth : 12 - (birthMonth - currentMonth);
+            
+            // חישוב מדויק יותר של החודשים שנותרו
+            const currentMonth = today.getMonth();
+            const currentDay = today.getDate();
+            const birthMonth = birthDateObject.getMonth();
+            const birthDay = birthDateObject.getDate();
+            
+            // חישוב החודשים והימים שנותרו באופן מדויק
+            let monthsDiff = currentMonth - birthMonth;
+            if (currentDay < birthDay) {
+                monthsDiff--;
+            }
+            
+            if (monthsDiff < 0) {
+                monthsDiff += 12;
+            }
+            
+            // התאמת סך החודשים עד גיל פרישה
+            monthsUntilRetirement -= monthsDiff;
 
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
@@ -296,12 +315,40 @@
 
             // חישוב יתרות לפי גיל
             const currentAge = age;
-            const ageOverTime = [];
+            const ageLabels = [];
+            
+            // שומר את תאריך הלידה
+            const birthDate = new Date(birthDateObject);
+            
+            // תאריך נוכחי לחישוב נקודת התחלה
+            const startDate = new Date();
             
             for (let i = 0; i < monthsUntilRetirement; i++) {
-                // מחשב את הגיל המדויק (עם תוספת חודשים)
-                const ageAtThisPoint = currentAge + (i / 12);
-                ageOverTime.push(ageAtThisPoint.toFixed(1));
+                // מעתיק את תאריך ההתחלה ומוסיף חודשים
+                const futureDate = new Date(startDate);
+                futureDate.setMonth(startDate.getMonth() + i);
+                
+                // חישוב גיל מדויק לפי תאריך העתידי מול תאריך הלידה
+                let futureAge = futureDate.getFullYear() - birthDate.getFullYear();
+                
+                // מתקן את הגיל אם יום ההולדת עוד לא הגיע בשנה הנוכחית
+                if (futureDate.getMonth() < birthDate.getMonth() || 
+                    (futureDate.getMonth() === birthDate.getMonth() && futureDate.getDate() < birthDate.getDate())) {
+                    futureAge--;
+                }
+                
+                // חישוב החלק העשרוני של הגיל (בחודשים)
+                let monthsSinceBirthday = futureDate.getMonth() - birthDate.getMonth();
+                if (monthsSinceBirthday < 0) {
+                    monthsSinceBirthday += 12;
+                }
+                if (futureDate.getDate() < birthDate.getDate()) {
+                    monthsSinceBirthday--;
+                }
+                
+                // חישוב הגיל המדויק כמספר עשרוני (שנים + חלקי שנה)
+                const preciseAge = futureAge + (monthsSinceBirthday / 12);
+                ageLabels.push(preciseAge.toFixed(2));
             }
 
             if (savingsChart) savingsChart.destroy();
@@ -316,7 +363,7 @@
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
-                    labels: ageOverTime,
+                    labels: ageLabels,
                     datasets: [
                         { 
                             label: 'צמיחת החיסכון', 
