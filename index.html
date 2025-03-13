@@ -313,14 +313,12 @@
                 }
             });
 
-            // יצירת מערך עם גילאים עתידיים
-            const ageLabels = [];
+            // יצירת מערך עם חודשים מהגיל הנוכחי ואילך
+            const timeLabels = [];
             
-            // פונקציה פשוטה לחישוב הגיל עבור מספר חודשים בעתיד
-            for (let i = 0; i <= monthsUntilRetirement; i++) {
-                // מחשבים את הגיל באופן פשוט - גיל נוכחי + חודשים/12
-                const futureAge = exactCurrentAge + (i / 12);
-                ageLabels.push(futureAge.toFixed(2));
+            // פשוט מספור של חודשים, מחודש 1 עד סוף תקופת החיסכון
+            for (let i = 1; i <= monthsUntilRetirement; i++) {
+                timeLabels.push(i);
             }
 
             if (savingsChart) savingsChart.destroy();
@@ -335,7 +333,7 @@
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
-                    labels: ageLabels,
+                    labels: timeLabels,
                     datasets: [
                         { 
                             label: 'צמיחת החיסכון', 
@@ -420,18 +418,16 @@
                                     size: window.innerWidth < 640 ? 10 : 12
                                 },
                                 callback: function(value, index, values) {
-                                    // מציג רק גילאים שלמים על הציר (ללא עשרוני)
-                                    const ageValue = parseFloat(value);
-                                    // בדיקה אם זה בדיוק גיל שלם (חלק עשרוני קרוב ל-0)
-                                    if (Math.abs(ageValue - Math.floor(ageValue)) < 0.1) {
-                                        return 'גיל ' + Math.floor(ageValue);
+                                    // מציג רק חודשים שהם כפולות של 12 (שנים)
+                                    if (value % 12 === 0) {
+                                        return 'שנה ' + (value / 12);
                                     }
                                     return '';
                                 }
                             },
                             title: {
                                 display: true,
-                                text: 'גיל',
+                                text: 'חודשים',
                                 font: {
                                     size: window.innerWidth < 640 ? 12 : 14
                                 }
