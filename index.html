@@ -252,33 +252,33 @@
             const retirementAge = parseInt(retirementAgeInput.value);
 
             // חישוב גיל נוכחי מדויק
-            let age = today.getFullYear() - birthDateObject.getFullYear();
-            if (today.getMonth() < birthDateObject.getMonth() || 
-                (today.getMonth() === birthDateObject.getMonth() && today.getDate() < birthDateObject.getDate())) {
-                age--;
+            function calculateExactAge(birthDate, currentDate) {
+                // חישוב הפרש שנים
+                let years = currentDate.getFullYear() - birthDate.getFullYear();
+                
+                // בדיקה אם חגג יום הולדת השנה
+                const hasCelebratedBirthdayThisYear = 
+                    currentDate.getMonth() > birthDate.getMonth() || 
+                    (currentDate.getMonth() === birthDate.getMonth() && 
+                    currentDate.getDate() >= birthDate.getDate());
+                
+                // אם לא חגג עדיין יום הולדת השנה, מפחית שנה
+                if (!hasCelebratedBirthdayThisYear) {
+                    years--;
+                }
+                
+                return years;
             }
             
-            // חישוב חודשי ההפרש עד גיל הפרישה
-            let monthsUntilRetirement = (retirementAge - age) * 12;
+            const exactCurrentAge = calculateExactAge(birthDateObject, today);
             
-            // חישוב מדויק יותר של החודשים שנותרו
-            const currentMonth = today.getMonth();
-            const currentDay = today.getDate();
-            const birthMonth = birthDateObject.getMonth();
-            const birthDay = birthDateObject.getDate();
+            // חישוב מדויק של חודשים עד גיל פרישה
+            const monthsUntilRetirement = (retirementAge - exactCurrentAge) * 12;
             
-            // חישוב החודשים והימים שנותרו באופן מדויק
-            let monthsDiff = currentMonth - birthMonth;
-            if (currentDay < birthDay) {
-                monthsDiff--;
+            if (monthsUntilRetirement <= 0) {
+                alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
+                return;
             }
-            
-            if (monthsDiff < 0) {
-                monthsDiff += 12;
-            }
-            
-            // התאמת סך החודשים עד גיל פרישה
-            monthsUntilRetirement -= monthsDiff;
 
             if (monthsUntilRetirement <= 0) {
                 alert('כבר הגעת או עבר גיל הפרישה שבחרת!');
@@ -313,41 +313,47 @@
                 }
             });
 
-            // חישוב יתרות לפי גיל
-            const currentAge = age;
+            // יצירת מערך עם גילאים עתידיים
             const ageLabels = [];
             
-            // שומר את תאריך הלידה
-            const birthDate = new Date(birthDateObject);
+            // פונקציה לחישוב גיל בתאריך עתידי
+            function calculateAgeAtFutureDate(birthDate, monthsInFuture) {
+                const futureDate = new Date();
+                futureDate.setMonth(futureDate.getMonth() + monthsInFuture);
+                return calculateExactAge(birthDate, futureDate);
+            }
             
-            // תאריך נוכחי לחישוב נקודת התחלה
-            const startDate = new Date();
-            
-            for (let i = 0; i < monthsUntilRetirement; i++) {
-                // מעתיק את תאריך ההתחלה ומוסיף חודשים
-                const futureDate = new Date(startDate);
-                futureDate.setMonth(startDate.getMonth() + i);
+            // יצירת מערך עם ערכי גיל לכל חודש בתקופת החיסכון
+            for (let i = 0; i <= monthsUntilRetirement; i++) {
+                const futureAge = calculateAgeAtFutureDate(birthDateObject, i);
                 
-                // חישוב גיל מדויק לפי תאריך העתידי מול תאריך הלידה
-                let futureAge = futureDate.getFullYear() - birthDate.getFullYear();
+                // לחישוב החלק העשרוני, נבדוק כמה חודשים נותרו עד יום ההולדת הבא
+                let futureDate = new Date();
+                futureDate.setMonth(futureDate.getMonth() + i);
                 
-                // מתקן את הגיל אם יום ההולדת עוד לא הגיע בשנה הנוכחית
-                if (futureDate.getMonth() < birthDate.getMonth() || 
-                    (futureDate.getMonth() === birthDate.getMonth() && futureDate.getDate() < birthDate.getDate())) {
-                    futureAge--;
+                // מציאת תאריך יום ההולדת הבא אחרי התאריך העתידי
+                let nextBirthday = new Date(
+                    futureDate.getFullYear(),
+                    birthDateObject.getMonth(),
+                    birthDateObject.getDate()
+                );
+                
+                // אם יום ההולדת כבר עבר השנה, נוסיף שנה
+                if (nextBirthday < futureDate) {
+                    nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
                 }
                 
-                // חישוב החלק העשרוני של הגיל (בחודשים)
-                let monthsSinceBirthday = futureDate.getMonth() - birthDate.getMonth();
-                if (monthsSinceBirthday < 0) {
-                    monthsSinceBirthday += 12;
-                }
-                if (futureDate.getDate() < birthDate.getDate()) {
-                    monthsSinceBirthday--;
-                }
+                // חישוב מספר החודשים בין התאריך העתידי ליום ההולדת הבא
+                const monthsUntilNextBirthday = 
+                    (nextBirthday.getFullYear() - futureDate.getFullYear()) * 12 + 
+                    (nextBirthday.getMonth() - futureDate.getMonth());
                 
-                // חישוב הגיל המדויק כמספר עשרוני (שנים + חלקי שנה)
-                const preciseAge = futureAge + (monthsSinceBirthday / 12);
+                // חישוב החלק העשרוני של הגיל (12 פחות מספר החודשים עד יום ההולדת הבא, מחולק ב-12)
+                const fractionalAge = (12 - monthsUntilNextBirthday) / 12;
+                
+                // הגיל המלא עם החלק העשרוני
+                const preciseAge = futureAge + fractionalAge;
+                
                 ageLabels.push(preciseAge.toFixed(2));
             }
 
@@ -449,9 +455,10 @@
                                 },
                                 callback: function(value, index, values) {
                                     // מציג רק גילאים שלמים על הציר
-                                    const age = parseFloat(value);
-                                    if (Number.isInteger(age)) {
-                                        return 'גיל ' + age;
+                                    const ageValue = parseFloat(value);
+                                    // אם זה גיל שלם (בלי חלק עשרוני משמעותי)
+                                    if (Math.abs(ageValue - Math.round(ageValue)) < 0.1) {
+                                        return 'גיל ' + Math.round(ageValue);
                                     }
                                     return '';
                                 }
