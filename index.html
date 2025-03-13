@@ -101,7 +101,7 @@
                     </div>
                 </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-700 text-center mt-6">צפה בנתונים המדויקים על ידי מעבר עם הסמן מעל הגרף</h3>
+            <h3 class="text-lg font-semibold text-gray-700 text-center mt-6">צפה בהתקדמות החיסכון לפי גיל</h3>
             <canvas id="savingsChart" class="mt-6"></canvas>
         </div>
         
@@ -294,6 +294,16 @@
                 }
             });
 
+            // חישוב יתרות לפי גיל
+            const currentAge = age;
+            const ageOverTime = [];
+            
+            for (let i = 0; i < monthsUntilRetirement; i++) {
+                // מחשב את הגיל המדויק (עם תוספת חודשים)
+                const ageAtThisPoint = currentAge + (i / 12);
+                ageOverTime.push(ageAtThisPoint.toFixed(1));
+            }
+
             if (savingsChart) savingsChart.destroy();
 
             // התאמת Canvas למובייל
@@ -306,7 +316,7 @@
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
-                    labels: Array.from({ length: monthsUntilRetirement }, (_, i) => `חודש ${i + 1}`),
+                    labels: ageOverTime,
                     datasets: [
                         { 
                             label: 'צמיחת החיסכון', 
@@ -386,9 +396,24 @@
                             },
                             ticks: {
                                 // במסך קטן מציג פחות תגיות צירים
-                                maxTicksLimit: window.innerWidth < 640 ? 6 : 12,
+                                maxTicksLimit: window.innerWidth < 640 ? 6 : 10,
                                 font: {
                                     size: window.innerWidth < 640 ? 10 : 12
+                                },
+                                callback: function(value, index, values) {
+                                    // מציג רק גילאים שלמים על הציר
+                                    const age = parseFloat(value);
+                                    if (Number.isInteger(age)) {
+                                        return 'גיל ' + age;
+                                    }
+                                    return '';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'גיל',
+                                font: {
+                                    size: window.innerWidth < 640 ? 12 : 14
                                 }
                             }
                         }
