@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gradient-to-b from-blue-600 via-purple-600 to-indigo-800 min-h-screen flex items-center justify-center" dir="rtl">
-    <div class="container mx-auto px-4 sm:px-6 py-6 sm:py-10 max-w-3xl bg-white/95 backdrop-blur-sm rounded-xl shadow-xl">
-        <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-l from-blue-500 to-purple-600 mb-4 text-center">המסלול שלך למיליון</h1>
-        <h2 class="text-xl font-semibold text-indigo-600 text-center mb-6">@פרופ' גיל - מגלים את שוק ההון</h2>
+<body class="bg-gradient-to-b from-blue-600 via-purple-600 to-indigo-800 min-h-screen flex items-center justify-center px-2 py-4" dir="rtl">
+    <div class="container mx-auto px-3 sm:px-6 py-5 sm:py-10 max-w-3xl bg-white/95 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden">
+        <h1 class="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-l from-blue-500 to-purple-600 mb-2 sm:mb-4 text-center">המסלול שלך למיליון</h1>
+        <h2 class="text-lg sm:text-xl font-semibold text-indigo-600 text-center mb-4 sm:mb-6">@פרופ' גיל - מגלים את שוק ההון</h2>
         
         <!-- קישורים לקבוצת הווטסאפ ולאתר - עיצוב חדש עם צבעים חיים יותר -->
         <div class="flex flex-col sm:flex-row justify-center gap-2 mb-6">
@@ -28,7 +28,7 @@
             </a>
         </div>
         
-        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg shadow-lg p-6 border border-indigo-100">
+        <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg shadow-lg p-4 sm:p-6 border border-indigo-100">
             <div class="space-y-4">
                 <h2 class="text-lg font-semibold text-indigo-700 text-center">הכנס את תאריך הלידה שלך</h2>
                 
@@ -145,15 +145,61 @@
         @media (max-width: 640px) {
             h1 {
                 font-size: 1.75rem; /* כותרת ראשית קטנה יותר במובייל */
+                margin-bottom: 0.5rem;
+                background-image: linear-gradient(to right, #4f46e5, #7e22ce);
+                -webkit-background-clip: text;
+                color: transparent;
+                padding: 0.5rem 0;
             }
             h2, h3 {
-                font-size: 1rem; /* כותרות משנה קטנות יותר במובייל */
+                font-size: 1.1rem; /* כותרות משנה קטנות יותר במובייל */
+                margin-bottom: 0.5rem;
             }
             .font-bold.text-indigo-700.text-xl {
-                font-size: 1.1rem; /* גודל תוצאה קטן יותר במובייל */
+                font-size: 1.25rem; /* גודל תוצאה גדול יותר לקריאות במובייל */
+                font-weight: 700;
             }
             input[type="number"] {
-                font-size: 0.9rem; /* גודל טקסט קטן יותר בשדות במובייל */
+                font-size: 1rem; /* גודל טקסט גדול יותר בשדות במובייל לקריאות */
+                padding: 0.75rem;
+            }
+            
+            /* שיפורים לגרסת מובייל */
+            .container {
+                padding: 1rem 0.75rem;
+                margin: 0.5rem;
+            }
+            
+            .grid-cols-1 > div {
+                margin-bottom: 0.75rem;
+                padding: 0.75rem;
+                border-radius: 0.75rem;
+                border-width: 2px;
+                background: linear-gradient(135deg, #fff 0%, #eef2ff 100%);
+                box-shadow: 0 4px 8px rgba(79, 70, 229, 0.1);
+            }
+            
+            /* כפתור חישוב - כפתור גדול ובולט במיוחד למובייל */
+            #calculate-button {
+                width: 100%;
+                max-width: 200px;
+                padding: 0.75rem 1rem;
+                font-size: 1.1rem;
+                letter-spacing: 0.025em;
+                border-radius: 9999px;
+                background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%);
+                box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            }
+            
+            /* פילטר "גלואו" לכפתור כשנלחץ */
+            #calculate-button:active {
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            }
+            
+            /* שיפור גודל הגרף */
+            #savingsChart {
+                height: 200px !important;
+                margin-top: 1rem;
             }
         }
     </style>
@@ -250,6 +296,13 @@
 
             if (savingsChart) savingsChart.destroy();
 
+            // התאמת Canvas למובייל
+            const canvas = document.getElementById('savingsChart');
+            const isMobile = window.innerWidth < 640;
+            if (isMobile) {
+                canvas.height = 200; // גובה מותאם למסך קטן
+            }
+            
             savingsChart = new Chart(ctxSavings, {
                 type: 'line',
                 data: {
@@ -316,13 +369,27 @@
                             },
                             ticks: {
                                 callback: function(value) {
+                                    // במסך קטן מציג רק את המספר בלי סימן שקל
+                                    if (window.innerWidth < 640) {
+                                        return value >= 1000 ? (value/1000).toFixed(0) + 'K' : value;
+                                    }
                                     return value.toLocaleString() + ' ₪';
+                                },
+                                font: {
+                                    size: window.innerWidth < 640 ? 10 : 12
                                 }
                             }
                         },
                         x: {
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                // במסך קטן מציג פחות תגיות צירים
+                                maxTicksLimit: window.innerWidth < 640 ? 6 : 12,
+                                font: {
+                                    size: window.innerWidth < 640 ? 10 : 12
+                                }
                             }
                         }
                     }
