@@ -316,45 +316,11 @@
             // יצירת מערך עם גילאים עתידיים
             const ageLabels = [];
             
-            // פונקציה לחישוב גיל בתאריך עתידי
-            function calculateAgeAtFutureDate(birthDate, monthsInFuture) {
-                const futureDate = new Date();
-                futureDate.setMonth(futureDate.getMonth() + monthsInFuture);
-                return calculateExactAge(birthDate, futureDate);
-            }
-            
-            // יצירת מערך עם ערכי גיל לכל חודש בתקופת החיסכון
+            // פונקציה פשוטה לחישוב הגיל עבור מספר חודשים בעתיד
             for (let i = 0; i <= monthsUntilRetirement; i++) {
-                const futureAge = calculateAgeAtFutureDate(birthDateObject, i);
-                
-                // לחישוב החלק העשרוני, נבדוק כמה חודשים נותרו עד יום ההולדת הבא
-                let futureDate = new Date();
-                futureDate.setMonth(futureDate.getMonth() + i);
-                
-                // מציאת תאריך יום ההולדת הבא אחרי התאריך העתידי
-                let nextBirthday = new Date(
-                    futureDate.getFullYear(),
-                    birthDateObject.getMonth(),
-                    birthDateObject.getDate()
-                );
-                
-                // אם יום ההולדת כבר עבר השנה, נוסיף שנה
-                if (nextBirthday < futureDate) {
-                    nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-                }
-                
-                // חישוב מספר החודשים בין התאריך העתידי ליום ההולדת הבא
-                const monthsUntilNextBirthday = 
-                    (nextBirthday.getFullYear() - futureDate.getFullYear()) * 12 + 
-                    (nextBirthday.getMonth() - futureDate.getMonth());
-                
-                // חישוב החלק העשרוני של הגיל (12 פחות מספר החודשים עד יום ההולדת הבא, מחולק ב-12)
-                const fractionalAge = (12 - monthsUntilNextBirthday) / 12;
-                
-                // הגיל המלא עם החלק העשרוני
-                const preciseAge = futureAge + fractionalAge;
-                
-                ageLabels.push(preciseAge.toFixed(2));
+                // מחשבים את הגיל באופן פשוט - גיל נוכחי + חודשים/12
+                const futureAge = exactCurrentAge + (i / 12);
+                ageLabels.push(futureAge.toFixed(2));
             }
 
             if (savingsChart) savingsChart.destroy();
@@ -454,11 +420,11 @@
                                     size: window.innerWidth < 640 ? 10 : 12
                                 },
                                 callback: function(value, index, values) {
-                                    // מציג רק גילאים שלמים על הציר
+                                    // מציג רק גילאים שלמים על הציר (ללא עשרוני)
                                     const ageValue = parseFloat(value);
-                                    // אם זה גיל שלם (בלי חלק עשרוני משמעותי)
-                                    if (Math.abs(ageValue - Math.round(ageValue)) < 0.1) {
-                                        return 'גיל ' + Math.round(ageValue);
+                                    // בדיקה אם זה בדיוק גיל שלם (חלק עשרוני קרוב ל-0)
+                                    if (Math.abs(ageValue - Math.floor(ageValue)) < 0.1) {
+                                        return 'גיל ' + Math.floor(ageValue);
                                     }
                                     return '';
                                 }
